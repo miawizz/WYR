@@ -1,0 +1,15 @@
+{
+  "name": "Little Moments Generator",
+  "short_name": "Little Moments",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fffcf5",
+  "theme_color": "#699eb0",
+  "icons": [
+    {
+      "src": "https://dl.dropboxusercontent.com/scl/fi/8fk2krt7urgqbggr9auxn/PHP-LOGO-tb.png?rlkey=b0ckqoxsmquyza0wwy55k5rbe&st=mtkzjcb0&raw=1",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
