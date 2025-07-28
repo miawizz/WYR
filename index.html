@@ -84,7 +84,7 @@
 <body>
   <div id="gate">
     <h2>Private Access</h2>
-    <p>This page is for Little Moments purchasers only.<br> Please enter the password to continue.</p>
+    <p>This page is for Would You Rather purchasers only.<br> Please enter the password to continue.</p>
     <input type="password" id="passwordInput" placeholder="Enter password..." />
     <br>
     <button onclick="checkPassword()">Submit</button>
@@ -94,16 +94,16 @@
   <div id="generator">
     <img src="https://dl.dropboxusercontent.com/scl/fi/8fk2krt7urgqbggr9auxn/PHP-LOGO-tb.png?rlkey=b0ckqoxsmquyza0wwy55k5rbe&st=mtkzjcb0&raw=1" alt="Playful Heart Parenting Logo" class="logo" />
     <h1>Would You Rather -- from Playful Heart Parenting</h1>
-    <button onclick="generatePrompt()">Get a Moment</button>
-    <div id="prompt">Tap the button to get a moment of play!</div>
+    <button onclick="generatePrompt()">Would you rather...</button>
+    <div id="prompt">Tap the button to get a WYR prompt!</div>
     <img src="https://dl.dropboxusercontent.com/scl/fi/mra3nj61mjppj7k4bep1t/LMFBL-new-cover.jpg?rlkey=oe95rmwhlx7lw830ehvjilwjd&st=jj9yb3j7&raw=1" alt="Little Moments for Big Laughs Cover" class="cover" />
     <p style="font-size: 0.9rem; color: #777; margin-top: 3rem; max-width: 90%; margin-left: auto; margin-right: auto;">
-      © 2025 Mia Wisinski, Playful Heart Parenting. This generator is for personal use only by those who have purchased <em>Little Moments for Big Laughs</em>. Please do not share this link publicly or distribute without explicit permission.
+      © 2025 Mia Wisinski, Playful Heart Parenting. This app is for personal use only by those who have purchased <em>Would You Rather from Playful Heart Parenting</em>. Please do not share this link publicly or distribute without explicit permission.
     </p>
   </div>
 
   <script>
-    const password = "moments";
+    const password = "wyr";
 
     function checkPassword() {
       const userInput = document.getElementById("passwordInput").value;
