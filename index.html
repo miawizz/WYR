@@ -8,78 +8,88 @@
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#699eb0" />
   <style>
-    body {
-      background: #fffcf5;
-      font-family: 'Poppins', sans-serif;
-      text-align: center;
-      padding: 2rem;
-      color: #333;
-    }
-    .logo {
-      max-width: 150px;
-      margin-bottom: 1rem;
-    }
-    h1 {
-      color: #699eb0;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      font-size: 1.6rem;
-    }
-    #prompt {
-      margin: 2rem auto;
-      font-size: 1.25rem;
-      padding: 1.5rem;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 16px;
-      border: 2px dashed #699eb0;
-      max-width: 90%;
-      min-height: 120px;
-      backdrop-filter: blur(6px);
-    }
-    button {
-      background-color: #699eb0;
-      color: white;
-      border: none;
-      padding: 1rem 2rem;
-      border-radius: 30px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      margin-top: 1rem;
-      font-weight: 600;
-    }
-    button:hover {
-      background-color: #88b6c8;
-    }
-    .cover {
-      margin-top: 2rem;
-      width: 250px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    #gate, #generator {
-      display: none;
-    }
-    #gate {
-      display: block;
-      max-width: 400px;
-      margin: 0 auto;
-      margin-top: 4rem;
-    }
-    input[type="password"] {
-      padding: 0.75rem;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-      width: 80%;
-      max-width: 300px;
-      margin-bottom: 1rem;
-    }
-    .hint {
-      font-size: 0.85rem;
-      color: #999;
-      margin-top: 0.5rem;
-    }
-  </style>
+  body {
+    background: #fff9f3; /* light warm cream */
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    padding: 2rem;
+    color: #3c3c3c; /* warm soft charcoal */
+  }
+
+  .logo {
+    max-width: 150px;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    color: #127490; /* teal/blue arrow */
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 1.6rem;
+  }
+
+  #prompt {
+    margin: 2rem auto;
+    font-size: 1.25rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    border: 2px dashed #f8b934; /* yellow from background */
+    max-width: 90%;
+    min-height: 120px;
+    backdrop-filter: blur(6px);
+  }
+
+  button {
+    background-color: #b24627; /* orange/red arrow */
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+
+  button:hover {
+    background-color: #c95e3c; /* lighter red-orange hover */
+  }
+
+  .cover {
+    margin-top: 2rem;
+    width: 250px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  #gate, #generator {
+    display: none;
+  }
+
+  #gate {
+    display: block;
+    max-width: 400px;
+    margin: 0 auto;
+    margin-top: 4rem;
+  }
+
+  input[type="password"] {
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    width: 80%;
+    max-width: 300px;
+    margin-bottom: 1rem;
+  }
+
+  .hint {
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 0.5rem;
+  }
+</style>
 </head>
 <body>
   <div id="gate">
