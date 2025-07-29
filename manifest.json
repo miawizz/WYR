@@ -1,6 +1,6 @@
 {
-  "name": "Little Moments Generator",
-  "short_name": "Little Moments",
+  "name": "Would You Rather",
+  "short_name": "Would You Rather",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fffcf5",
