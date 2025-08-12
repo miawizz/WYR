@@ -7,191 +7,209 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#699eb0" />
+
   <style>
-  body {
-    background: #fff9f3; /* light warm cream */
-    font-family: 'Poppins', sans-serif;
-    text-align: center;
-    padding: 2rem;
-    color: #3c3c3c; /* warm soft charcoal */
-  }
+    body {
+      background: #fff9f3; /* light warm cream */
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      padding: 2rem;
+      color: #3c3c3c; /* warm soft charcoal */
+      margin: 0;
+    }
+    .logo { max-width: 150px; margin-bottom: 1rem; }
+    h1 {
+      color: #127490; /* teal/blue */
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 1.6rem;
+    }
+    #prompt {
+      margin: 2rem auto;
+      font-size: 1.25rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      border: 2px dashed #f8b934; /* yellow */
+      max-width: 90%;
+      min-height: 120px;
+      backdrop-filter: blur(6px);
+    }
+    button {
+      background-color: #b24627; /* orange/red */
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+    button:hover { background-color: #c95e3c; }
 
-  .logo {
-    max-width: 150px;
-    margin-bottom: 1rem;
-  }
+    .cover {
+      margin-top: 2rem;
+      width: 250px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
 
-  h1 {
-    color: #127490; /* teal/blue arrow */
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    font-size: 1.6rem;
-  }
+    /* One-time courtesy overlay */
+    #courtesyOverlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.4);
+      display: none; place-items: center;
+      z-index: 9999; opacity: 1; transition: opacity .3s ease;
+    }
+    .courtesy-card {
+      width: min(560px, 92%);
+      background: #fff;
+      color: #3c3c3c;
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.18);
+      padding: 22px;
+      text-align: left;
+    }
+    .courtesy-card h2 { margin: 0 0 8px; color: #127490; font-size: 20px; }
+    .courtesy-card p { margin: 6px 0 14px; color: #666; }
+    .courtesy-check { display:flex; align-items:center; gap:10px; margin: 6px 0 12px; }
+    #courtesyContinue {
+      width: 100%; padding: 12px 14px; border: 0;
+      border-radius: 14px; font-weight: 700; cursor: pointer;
+      background: #b24627; color: #fff;
+      box-shadow: 0 4px 14px rgba(0,0,0,.08);
+    }
+    #courtesyContinue:disabled { opacity: .5; cursor: not-allowed; }
 
-  #prompt {
-    margin: 2rem auto;
-    font-size: 1.25rem;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 16px;
-    border: 2px dashed #f8b934; /* yellow from background */
-    max-width: 90%;
-    min-height: 120px;
-    backdrop-filter: blur(6px);
-  }
-
-  button {
-    background-color: #b24627; /* orange/red arrow */
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 30px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    margin-top: 1rem;
-    font-weight: 600;
-  }
-
-  button:hover {
-    background-color: #c95e3c; /* lighter red-orange hover */
-  }
-
-  .cover {
-    margin-top: 2rem;
-    width: 250px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  }
-
-  #gate, #generator {
-    display: none;
-  }
-
-  #gate {
-    display: block;
-    max-width: 400px;
-    margin: 0 auto;
-    margin-top: 4rem;
-  }
-
-  input[type="password"] {
-    padding: 0.75rem;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    width: 80%;
-    max-width: 300px;
-    margin-bottom: 1rem;
-  }
-
-  .hint {
-    font-size: 0.85rem;
-    color: #999;
-    margin-top: 0.5rem;
-  }
-</style>
+    footer {
+      font-size: 0.9rem; color: #777;
+      margin-top: 3rem; max-width: 90%;
+      margin-left: auto; margin-right: auto;
+    }
+  </style>
 </head>
 <body>
-  <div id="gate">
-    <h2>Private Access</h2>
-    <p>This page is for Would You Rather purchasers only.<br> Please enter the password to continue.</p>
-    <input type="password" id="passwordInput" placeholder="Enter password..." />
-    <br>
-    <button onclick="checkPassword()">Submit</button>
-    <div class="hint">(Hint: It's in your receipt email!)</div>
-  </div>
 
+  <!-- One-time courtesy reminder overlay -->
+  <section id="courtesyOverlay" role="dialog" aria-labelledby="courtesyTitle" aria-modal="true">
+    <div class="courtesy-card">
+      <h2 id="courtesyTitle">Thanks for supporting this work</h2>
+      <p>Please do not share this link.</p>
+
+      <label class="courtesy-check">
+        <input type="checkbox" id="courtesyAck" />
+        <span>I understand — got it!</span>
+      </label>
+
+      <button id="courtesyContinue" disabled>Continue</button>
+    </div>
+  </section>
+
+  <!-- App content -->
   <div id="generator">
     <img src="https://www.dropbox.com/scl/fi/bxxozomo7t9nxhog8kbt9/WYRgraphic.png?rlkey=qswgg970yapmsjkp0slkqjdov&st=o5kf3lel&raw=1" alt="WYR PHP logo" class="logo" />
     <h1>WOULD YOU RATHER...? from Playful Heart Parenting</h1>
+
     <button onclick="generatePrompt()">Would you rather...</button>
     <div id="prompt">Tap the button to get a "Would you rather" question! For extra fun, explain your answer!</div>
-    <https://www.dropbox.com/scl/fi/bxxozomo7t9nxhog8kbt9/WYRgraphic.png?rlkey=qswgg970yapmsjkp0slkqjdov&st=o5kf3lel?raw=1" alt="Little Moments for Big Laughs Cover" class="cover" />
-    <p style="font-size: 0.9rem; color: #777; margin-top: 3rem; max-width: 90%; margin-left: auto; margin-right: auto;">
-      © 2025 Mia Wisinski, Playful Heart Parenting. This app is for personal use only by those who have purchased <em>Would You Rather from Playful Heart Parenting</em>. Please do not share this link publicly or distribute without explicit permission.
-    </p>
-      <div style="margin-top: 3rem;">
-  <h2>Submit Your Own!</h2>
-  <p style="font-size: 1rem; max-width: 600px; margin: 0 auto;">
-    Got a funny or creative Would You Rather idea? We’d love to hear it! Click below to submit — we may feature it in a future update and credit your first name.
-  </p>
-  <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScUKjXC-tbLy-BRjFXl8EwEvs9i1OYOlQZqMqX1QeVsvnlaAQ/viewform', '_blank')"
-          style="margin-top: 1rem;">
-    Submit Your Idea
-  </button>
+
+    <!-- (Optional) cover image, fixed broken tag from previous version -->
+    <!-- <img src="..." alt="Little Moments for Big Laughs Cover" class="cover" /> -->
+
+    <footer>
+      © 2025 Mia Wisinski, Playful Heart Parenting. This app is for personal use only by those who have purchased <em>Would You Rather</em> from Playful Heart Parenting. Please do not share this link publicly or distribute without explicit permission.
+    </footer>
+
+    <div style="margin-top: 2rem;">
+      <h2>Submit Your Own!</h2>
+      <p style="font-size: 1rem; max-width: 600px; margin: 0 auto;">
+        Got a funny or creative Would You Rather idea? We’d love to hear it! Click below to submit — we may feature it in a future update and credit your first name.
+      </p>
+      <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScUKjXC-tbLy-BRjFXl8EwEvs9i1OYOlQZqMqX1QeVsvnlaAQ/viewform', '_blank')" style="margin-top: 1rem;">
+        Submit Your Idea
+      </button>
+    </div>
   </div>
-      
-  </div>
+
   <script>
-    const password = "wyr";
+    /* One-time courtesy reminder */
+    (function(){
+      const COURTESY_KEY = 'wyr_courtesy_v1';
+      const overlay = document.getElementById('courtesyOverlay');
+      const ack     = document.getElementById('courtesyAck');
+      const goBtn   = document.getElementById('courtesyContinue');
 
-    function checkPassword() {
-      const userInput = document.getElementById("passwordInput").value;
-      if (userInput.trim().toLowerCase() === password) {
-        document.getElementById("gate").style.display = "none";
-        document.getElementById("generator").style.display = "block";
-      } else {
-        alert("Incorrect password. Please try again.");
+      if (localStorage.getItem(COURTESY_KEY) !== 'yes') {
+        overlay.style.display = 'grid';
+        ack.addEventListener('change', ()=>{ goBtn.disabled = !ack.checked; });
+        goBtn.addEventListener('click', ()=>{
+          localStorage.setItem(COURTESY_KEY, 'yes');
+          overlay.style.opacity = '0';
+          setTimeout(()=>{ overlay.style.display='none'; overlay.style.opacity='1'; }, 320);
+        });
       }
-    }
+    })();
 
+    /* Prompts */
     const prompts = [
 "Would you rather have to eat a handful of jelly beans every hour on the hour (even setting an alarm to wake through the night) or legally change your name to Jelly Bean [Your Last Name]?",
-  "Would you rather sleep in a giant flower or have the magical ability to grow flowers wherever you walk?",
-  "Would you rather be able to control the weather with your mind or move objects with your mind?",
-  "Would you rather have a little alarm bell automatically go off every time you fart or have your farts be bright colored puffs of air so everybody knows it was you?",
-  "Would you rather drink a pizza flavored smoothie or eat a smoothie flavored pizza?",
-  "Would you rather dance everywhere you went or have to sing everything you say?",
-  "Would you rather have a little parrot that lives on your shoulder all the time and interrupts you constantly or a little squirrel friend that lives in your pocket and is constantly filling it with little nuts and rocks and other treasures?",
-  "Would you rather have to communicate for a whole day by mooing like a cow or by clucking like a hen?",
-  "Would you rather have a magic mug that refills itself with your favorite beverage whenever you blink four times in a row or a magical snack bag that refills itself with your favorite snacks anytime you snapped your fingers three times in a row?",
-  "Would you rather have the song wheels on the bus stuck in your head on a loop forever day and night or have to sing the entire wheels on the bus song every time you meet someone new out loud right after you say your first name?",
-  "Would you rather be able to lift anything in the world no matter how heavy it is or outrun anything in the world no matter how fast it is?",
-  "Would you rather be able to breathe underwater or fly?",
-  "Would you rather be able to communicate with animals or read other humans’ minds?",
-  "Would you rather have a live marching band wake you up in your room every morning at 6 AM or have a live marching band play you lullabies as they marched around your room at bedtime every night?",
-  "Would you rather have a dog tail wag every time you’re happy or cat ears that twitch every time you’re curious?",
-  "Would you rather have built-in wheels on your feet or built-in headlights on your forehead?",
-  "Would you rather get around everywhere by riding on a magic flying carpet or by riding on a magic flying unicorn?",
-  "Would you rather have the magic ability to make anything you draw come to life or anything you wish come true as long as this power can only be used for good and joy?",
-  "Would you rather be able to travel back in time to the past or travel forward in time into the future?",
-  "Would you rather have to sleep in a giant bird nest or in a giant clamshell?",
-  "Would you rather have smoke come out of your ears when you’re mad or bubbles come out of your nose when you’re feeling amused?",
-  "Would you rather have to wear an outfit made out of wet, toilet paper or out of chewed up bubblegum?",
-  "Would you rather have to take a hot air balloon to get anywhere that’s too far away to walk or ride on a giant mountain goat?",
-  "Would you rather sneeze out confetti or sprinkles?",
-  "Would you rather have 200 toes or 200 fingers?",
-  "Would you rather be able to snap your fingers and change your hair color in an instant or snap your fingers and change into any outfit you can imagine in an instant?",
-  "Would you rather only be able to get around by hopping like a bunny or by slithering around like a snake?",
-  "Would you rather be able to turn invisible by putting on a special invisibility hat or have a magic watch that freezes time whenever you press it?",
-  "Would you rather live in an actual life-size gingerbread house or have a magical candy forest behind you with a chocolate creek and icing covered hills?",
-  "Would you rather be able to walk on your elbows or balance and hop on your nose?",
-  "Would you rather be able to change colors like a chameleon to blend into your surroundings or grow leaves all over your body to blend in with nature?",
-  "Would you rather have a big huge inflatable bounce house that fits in your pocket so you can bring it with you wherever you go and it blows up by itself in just 10 seconds OR shoes that can make you bounce as high as a trampoline?",
-  "Would you rather have the ability to expertly play any instrument you ever pick up or be incredible at any sport you ever try?",
-  "Would you rather be able to speak and understand every language that exists in the world or magically find anything that’s lost within five minutes?",
-  "Would you rather have to communicate for a day only in burps or in toots?",
-  "Would you rather have to chew your way through a wall of cotton candy to get to the bathroom every time you have to go or dig through a wall of slime?",
-  "Would you rather be able to juggle anything (like even 20 elephants) or be able to balance on anything and never ever fall (like even tightrope walk on a piece of floss!)",
-  "Would you rather have to wear poop emoji tattoos on your cheeks or wear a poop emoji hat for a whole year?",
-  "Would you rather have to swim through a pool of jello every morning for your exercise or sprint across a field full of slippery banana peels?",
-  "Would you rather have to dress up like a giant pumpkin wherever you go or wear shoes carved out of real pumpkins (that you have to re-carve for yourself whenever they get moldy?)",
-  "Would you rather be able to fly by flapping your ears or swim super fast by your feet automatically turning into flippers whenever they touch water?",
-  "Would you rather have a magical fresh squeezed lemonade stand in your house that always has the most delicious, refreshing lemonade or a magical cookie cart that is always stocked with fresh-baked, warm, perfect cookies?",
-  "Would you rather have to paint a whole mural but you can only use your toes to hold the paintbrush or have to sculpt a whole statue but it’s made out of cheese and you have to use your teeth?",
-  "Would you rather never have to smell anything bad (like a fart, garbage, skunk) or have everything you ever eat taste amazing?",
-  "Would you rather sweat out chocolate milk or have rainbow colored teeth?",
-  "Would you rather have the ability to shrink down to the size of an ant or grow as big as a building?",
-  "Would you rather have the ability to be as loud as a foghorn whenever you want or have a magical whisper that can be heard from miles away when you want it to?",
-  "Would you rather have to start dancing automatically every time you hear music or start singing along automatically even if you don’t know the words or if it doesn’t have words?",
-  "Would you rather have to live on a giant brownie for a day or live in a giant bowl of cereal for a day?",
-  "Would you rather have magical armpits that start talking every time you lift your arms up or magical feet that start talking every time you take your socks and shoes off?",
-  "Would you rather have long hair growing from your knees (like long enough to braid it) or growing from your elbows?",
-  "Would you rather have to have a turtle shell or a snail shell attached to your back?",
-  "Would you rather have a magic backpack that gives you two extra arms when you wear it or have magic pants that give you two extra legs?",
-  "Would you rather have your bedroom walls made out of pizza or out of cake?",
-  "Would you rather have a built-in trampoline mode in your feet that lets you jump like you’re on a trampoline or a built-in slide mode on your butt that lets you sit down and slide really fast to anywhere you want to go?",
-  "Would you rather spend a day inside a snowglobe or spend a day inside a dollhouse?"];
+"Would you rather sleep in a giant flower or have the magical ability to grow flowers wherever you walk?",
+"Would you rather be able to control the weather with your mind or move objects with your mind?",
+"Would you rather have a little alarm bell automatically go off every time you fart or have your farts be bright colored puffs of air so everybody knows it was you?",
+"Would you rather drink a pizza flavored smoothie or eat a smoothie flavored pizza?",
+"Would you rather dance everywhere you went or have to sing everything you say?",
+"Would you rather have a little parrot that lives on your shoulder all the time and interrupts you constantly or a little squirrel friend that lives in your pocket and is constantly filling it with little nuts and rocks and other treasures?",
+"Would you rather have to communicate for a whole day by mooing like a cow or by clucking like a hen?",
+"Would you rather have a magic mug that refills itself with your favorite beverage whenever you blink four times in a row or a magical snack bag that refills itself with your favorite snacks anytime you snapped your fingers three times in a row?",
+"Would you rather have the song wheels on the bus stuck in your head on a loop forever day and night or have to sing the entire wheels on the bus song every time you meet someone new out loud right after you say your first name?",
+"Would you rather be able to lift anything in the world no matter how heavy it is or outrun anything in the world no matter how fast it is?",
+"Would you rather be able to breathe underwater or fly?",
+"Would you rather be able to communicate with animals or read other humans’ minds?",
+"Would you rather have a live marching band wake you up in your room every morning at 6 AM or have a live marching band play you lullabies as they marched around your room at bedtime every night?",
+"Would you rather have a dog tail wag every time you’re happy or cat ears that twitch every time you’re curious?",
+"Would you rather have built-in wheels on your feet or built-in headlights on your forehead?",
+"Would you rather get around everywhere by riding on a magic flying carpet or by riding on a magic flying unicorn?",
+"Would you rather have the magic ability to make anything you draw come to life or anything you wish come true as long as this power can only be used for good and joy?",
+"Would you rather be able to travel back in time to the past or travel forward in time into the future?",
+"Would you rather have to sleep in a giant bird nest or in a giant clamshell?",
+"Would you rather have smoke come out of your ears when you’re mad or bubbles come out of your nose when you’re feeling amused?",
+"Would you rather have to wear an outfit made out of wet, toilet paper or out of chewed up bubblegum?",
+"Would you rather have to take a hot air balloon to get anywhere that’s too far away to walk or ride on a giant mountain goat?",
+"Would you rather sneeze out confetti or sprinkles?",
+"Would you rather have 200 toes or 200 fingers?",
+"Would you rather be able to snap your fingers and change your hair color in an instant or snap your fingers and change into any outfit you can imagine in an instant?",
+"Would you rather only be able to get around by hopping like a bunny or by slithering around like a snake?",
+"Would you rather be able to turn invisible by putting on a special invisibility hat or have a magic watch that freezes time whenever you press it?",
+"Would you rather live in an actual life-size gingerbread house or have a magical candy forest behind you with a chocolate creek and icing covered hills?",
+"Would you rather be able to walk on your elbows or balance and hop on your nose?",
+"Would you rather be able to change colors like a chameleon to blend into your surroundings or grow leaves all over your body to blend in with nature?",
+"Would you rather have a big huge inflatable bounce house that fits in your pocket so you can bring it with you wherever you go and it blows up by itself in just 10 seconds OR shoes that can make you bounce as high as a trampoline?",
+"Would you rather have the ability to expertly play any instrument you ever pick up or be incredible at any sport you ever try?",
+"Would you rather be able to speak and understand every language that exists in the world or magically find anything that’s lost within five minutes?",
+"Would you rather have to communicate for a day only in burps or in toots?",
+"Would you rather have to chew your way through a wall of cotton candy to get to the bathroom every time you have to go or dig through a wall of slime?",
+"Would you rather be able to juggle anything (like even 20 elephants) or be able to balance on anything and never ever fall (like even tightrope walk on a piece of floss!)",
+"Would you rather have to wear poop emoji tattoos on your cheeks or wear a poop emoji hat for a whole year?",
+"Would you rather have to swim through a pool of jello every morning for your exercise or sprint across a field full of slippery banana peels?",
+"Would you rather have to dress up like a giant pumpkin wherever you go or wear shoes carved out of real pumpkins (that you have to re-carve for yourself whenever they get moldy?)",
+"Would you rather be able to fly by flapping your ears or swim super fast by your feet automatically turning into flippers whenever they touch water?",
+"Would you rather have a magical fresh squeezed lemonade stand in your house that always has the most delicious, refreshing lemonade or a magical cookie cart that is always stocked with fresh-baked, warm, perfect cookies?",
+"Would you rather have to paint a whole mural but you can only use your toes to hold the paintbrush or have to sculpt a whole statue but it’s made out of cheese and you have to use your teeth?",
+"Would you rather never have to smell anything bad (like a fart, garbage, skunk) or have everything you ever eat taste amazing?",
+"Would you rather sweat out chocolate milk or have rainbow colored teeth?",
+"Would you rather have the ability to shrink down to the size of an ant or grow as big as a building?",
+"Would you rather have the ability to be as loud as a foghorn whenever you want or have a magical whisper that can be heard from miles away when you want it to?",
+"Would you rather have to start dancing automatically every time you hear music or start singing along automatically even if you don’t know the words or if it doesn’t have words?",
+"Would you rather have to live on a giant brownie for a day or live in a giant bowl of cereal for a day?",
+"Would you rather have magical armpits that start talking every time you lift your arms up or magical feet that start talking every time you take your socks and shoes off?",
+"Would you rather have long hair growing from your knees (like long enough to braid it) or growing from your elbows?",
+"Would you rather have to have a turtle shell or a snail shell attached to your back?",
+"Would you rather have a magic backpack that gives you two extra arms when you wear it or have magic pants that give you two extra legs?",
+"Would you rather have your bedroom walls made out of pizza or out of cake?",
+"Would you rather have a built-in trampoline mode in your feet that lets you jump like you’re on a trampoline or a built-in slide mode on your butt that lets you sit down and slide really fast to anywhere you want to go?",
+"Would you rather spend a day inside a snowglobe or spend a day inside a dollhouse?"
+];
 
     function generatePrompt() {
       const output = document.getElementById("prompt");
