@@ -1,11 +1,16 @@
 {
   "name": "Would You Rather",
   "short_name": "Would You Rather",
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#fffcf5",
   "theme_color": "#699eb0",
   "icons": [
+    {
+      "src": "https://www.dropbox.com/scl/fi/bxxozomo7t9nxhog8kbt9/WYRgraphic.png?rlkey=qswgg970yapmsjkp0slkqjdov&st=o5kf3lel&raw=1",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
     {
       "src": "https://www.dropbox.com/scl/fi/bxxozomo7t9nxhog8kbt9/WYRgraphic.png?rlkey=qswgg970yapmsjkp0slkqjdov&st=o5kf3lel&raw=1",
       "type": "image/png",
