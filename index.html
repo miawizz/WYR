@@ -230,15 +230,25 @@
       "Would you rather have shiny sequin-covered skin like a human disco ball OR have iridescent scales like a koi fish?"
     ];
 
-/* Shuffle setup */
-    const nextPrompt = makeShuffler(prompts);
+    // Fisher-Yates shuffle
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    let currentIndex = 0;
+    let shuffledPrompts = shuffle([...prompts]);
 
     function generatePrompt() {
-      const output = document.getElementById("prompt");
-      output.innerText = "...";
-      setTimeout(() => {
-        output.innerText = nextPrompt();
-      }, 400);
+      if (currentIndex >= shuffledPrompts.length) {
+        shuffledPrompts = shuffle([...prompts]);
+        currentIndex = 0;
+      }
+      document.getElementById("prompt").textContent = shuffledPrompts[currentIndex];
+      currentIndex++;
     }
   </script>
 </body>
