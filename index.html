@@ -7,7 +7,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#699eb0" />
-
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker Registered'))
+        .catch(error => console.log('Service Worker registration failed:', error));
+    });
+  }
+</script>
   <style>
     body {
       background: #fff9f3; /* light warm cream */
