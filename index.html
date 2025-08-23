@@ -10,16 +10,16 @@
 
   <style>
     body {
-      background: #fff9f3; /* light warm cream */
+      background: #fff9f3; 
       font-family: 'Poppins', sans-serif;
       text-align: center;
       padding: 2rem;
-      color: #3c3c3c; /* warm soft charcoal */
+      color: #3c3c3c; 
       margin: 0;
     }
     .logo { max-width: 150px; margin-bottom: 1rem; }
     h1 {
-      color: #127490; /* teal/blue */
+      color: #127490; 
       margin-bottom: 0.5rem;
       font-weight: 600;
       font-size: 1.6rem;
@@ -30,21 +30,20 @@
       padding: 1.5rem;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 16px;
-      border: 2px dashed #f8b934; /* yellow */
+      border: 2px dashed #f8b934; 
       max-width: 90%;
       min-height: 120px;
       backdrop-filter: blur(6px);
     }
-    .btns { display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; }
+    .btns { display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; margin-top:1rem; }
     button {
-      background-color: #b24627; /* orange/red */
+      background-color: #b24627; 
       color: white;
       border: none;
       padding: 1rem 1.2rem;
       border-radius: 30px;
       font-size: 1.05rem;
       cursor: pointer;
-      margin-top: 1rem;
       font-weight: 600;
       box-shadow: 0 4px 12px rgba(0,0,0,.08);
     }
@@ -56,14 +55,7 @@
     }
     .btn-secondary:hover{ background:#ffdcbf; }
 
-    .cover {
-      margin-top: 2rem;
-      width: 250px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    /* One-time courtesy overlay (unchanged) */
+    /* Courtesy overlay */
     #courtesyOverlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,.4);
@@ -130,17 +122,15 @@
 </head>
 <body>
 
-  <!-- One-time courtesy reminder overlay -->
+  <!-- Courtesy overlay -->
   <section id="courtesyOverlay" role="dialog" aria-labelledby="courtesyTitle" aria-modal="true">
     <div class="courtesy-card">
       <h2 id="courtesyTitle">Thanks for supporting this work</h2>
       <p>Please do not share this link.</p>
-
       <label class="courtesy-check">
         <input type="checkbox" id="courtesyAck" />
         <span>I understand — got it!</span>
       </label>
-
       <button id="courtesyContinue" disabled>Continue</button>
     </div>
   </section>
@@ -150,10 +140,17 @@
     <img src="https://www.dropbox.com/scl/fi/bxxozomo7t9nxhog8kbt9/WYRgraphic.png?rlkey=qswgg970yapmsjkp0slkqjdov&st=o5kf3lel&raw=1" alt="WYR PHP logo" class="logo" />
     <h1>WOULD YOU RATHER...? from Playful Heart Parenting</h1>
 
+    <!-- Row 1 -->
     <div class="btns">
       <button id="btnNext">Would you rather…</button>
+    </div>
+    <!-- Row 2 -->
+    <div class="btns">
       <button id="btnBack">Back</button>
       <button id="btnFwd">Forward</button>
+    </div>
+    <!-- Row 3 -->
+    <div class="btns">
       <button id="btnSave" class="btn-secondary">Save to Favorites</button>
     </div>
 
@@ -191,7 +188,7 @@
   <div id="toast" role="status" aria-live="polite"></div>
 
   <script>
-    /* One-time courtesy reminder (unchanged) */
+    /* Courtesy overlay */
     (function(){
       const COURTESY_KEY = 'wyr_courtesy_v1';
       const overlay = document.getElementById('courtesyOverlay');
