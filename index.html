@@ -35,18 +35,26 @@
       min-height: 120px;
       backdrop-filter: blur(6px);
     }
+    .btns { display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; }
     button {
       background-color: #b24627; /* orange/red */
       color: white;
       border: none;
-      padding: 1rem 2rem;
+      padding: 1rem 1.2rem;
       border-radius: 30px;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       cursor: pointer;
       margin-top: 1rem;
       font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
     }
     button:hover { background-color: #c95e3c; }
+    button[disabled]{opacity:.5; cursor:not-allowed;}
+
+    .btn-secondary{
+      background:#ffe9d6; color:#6b3a28;
+    }
+    .btn-secondary:hover{ background:#ffdcbf; }
 
     .cover {
       margin-top: 2rem;
@@ -55,7 +63,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    /* One-time courtesy overlay */
+    /* One-time courtesy overlay (unchanged) */
     #courtesyOverlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,.4);
@@ -87,6 +95,37 @@
       margin-top: 3rem; max-width: 90%;
       margin-left: auto; margin-right: auto;
     }
+
+    /* Favorites area */
+    #favWrap{ max-width:860px; margin:2rem auto 0; text-align:left; }
+    #favHeader{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    #favHeader h3{ margin:0; color:#7a3e2e; font-size:1.1rem; }
+    #favList{
+      list-style:none; padding:0; margin:12px 0 0;
+      display:grid; grid-template-columns:1fr; gap:10px;
+    }
+    .favItem{
+      background:#fff; border:1px solid #ffdcbf; border-radius:14px; padding:12px 14px;
+      display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+      box-shadow:0 2px 8px rgba(0,0,0,.04);
+    }
+    .favText{ font-size:.98rem; line-height:1.35rem; }
+    .favActions{ display:flex; gap:8px; flex-shrink:0; }
+    .iconBtn{
+      border:0; background:#ffe9d6; color:#6b3a28; padding:.45rem .7rem; border-radius:10px; font-size:.9rem; cursor:pointer;
+    }
+    .iconBtn:hover{ background:#ffdcbf; }
+    .muted{ color:#6b7f88; font-size:.9rem; }
+
+    /* Tiny toast */
+    #toast{
+      position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+      background:#127490; color:#fff; padding:10px 14px; border-radius:12px;
+      box-shadow:0 8px 24px rgba(0,0,0,.18); opacity:0; pointer-events:none;
+      transition:opacity .25s ease, transform .25s ease;
+      font-size:.95rem;
+    }
+    #toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
   </style>
 </head>
 <body>
@@ -111,7 +150,13 @@
     <img src="https://www.dropbox.com/scl/fi/bxxozomo7t9nxhog8kbt9/WYRgraphic.png?rlkey=qswgg970yapmsjkp0slkqjdov&st=o5kf3lel&raw=1" alt="WYR PHP logo" class="logo" />
     <h1>WOULD YOU RATHER...? from Playful Heart Parenting</h1>
 
-    <button onclick="generatePrompt()">Would you rather...</button>
+    <div class="btns">
+      <button id="btnNext">Would you rather…</button>
+      <button id="btnBack">Back</button>
+      <button id="btnFwd">Forward</button>
+      <button id="btnSave" class="btn-secondary">Save to Favorites</button>
+    </div>
+
     <div id="prompt">Tap the button to get a "Would You Rather" question! For extra fun, explain your answer!</div>
 
     <footer>
@@ -129,8 +174,24 @@
     </div>
   </div>
 
+  <!-- Favorites list -->
+  <section id="favWrap" aria-labelledby="favTitle">
+    <div id="favHeader">
+      <h3 id="favTitle">Favorites</h3>
+      <div class="btns" style="margin-top:0;">
+        <button class="btn-secondary" id="btnCopyAll">Copy All</button>
+        <button class="btn-secondary" id="btnClear">Clear</button>
+      </div>
+    </div>
+    <p class="muted" id="favEmpty">No favorites yet. Save any you love.</p>
+    <ul id="favList"></ul>
+  </section>
+
+  <!-- Tiny toast -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
   <script>
-    /* One-time courtesy reminder */
+    /* One-time courtesy reminder (unchanged) */
     (function(){
       const COURTESY_KEY = 'wyr_courtesy_v1';
       const overlay = document.getElementById('courtesyOverlay');
@@ -148,7 +209,7 @@
       }
     })();
 
-    /* Prompts */
+    /* Prompts (your existing list) */
     const prompts = [
       "Would you rather have to eat a handful of jelly beans every hour on the hour (even setting an alarm to wake through the night) or legally change your name to Jelly Bean [Your Last Name]?",
       "Would you rather sleep in a giant flower or have the magical ability to grow flowers wherever you walk?",
@@ -230,26 +291,232 @@
       "Would you rather have shiny sequin-covered skin like a human disco ball OR have iridescent scales like a koi fish?"
     ];
 
-    // Fisher-Yates shuffle
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
+    /* ---------- History + non-repeat shuffle (deck) + persistence ---------- */
+    function hashText(text){
+      let h = 0;
+      for (let i = 0; i < text.length; i++) h = (h * 31 + text.charCodeAt(i)) >>> 0;
+      return h.toString(36);
+    }
+    function shuffle(arr){
+      for (let i = arr.length - 1; i > 0; i--){
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
-      return array;
+      return arr;
+    }
+    const KEYNS = 'wyr'; // namespace so it won't clash with other apps
+    const KEY_VER   = `${KEYNS}_ver`;
+    const KEY_ORDER = `${KEYNS}_order`;
+    const KEY_INDEX = `${KEYNS}_idx`;
+    const KEY_HIST  = `${KEYNS}_hist`;
+    const KEY_HPOS  = `${KEYNS}_hpos`;
+    const KEY_FAVS  = `${KEYNS}_favs`;
+
+    const PROMPTS_VERSION = hashText(JSON.stringify(prompts));
+
+    function freshOrder(avoidIdx){
+      const order = shuffle(Array.from({length: prompts.length}, (_, i) => i));
+      if (avoidIdx != null && prompts.length > 1 && order[0] === avoidIdx){
+        const k = 1 + Math.floor(Math.random() * (order.length - 1));
+        [order[0], order[k]] = [order[k], order[0]];
+      }
+      return order;
+    }
+    function saveState(s){
+      localStorage.setItem(KEY_VER,   PROMPTS_VERSION);
+      localStorage.setItem(KEY_ORDER, JSON.stringify(s.order));
+      localStorage.setItem(KEY_INDEX, String(s.idx));
+      localStorage.setItem(KEY_HIST,  JSON.stringify(s.history));
+      localStorage.setItem(KEY_HPOS,  String(s.hpos));
+    }
+    function loadState(){
+      const savedVer = localStorage.getItem(KEY_VER);
+      let state = { order:null, idx:0, history:[], hpos:0 };
+      if (savedVer === PROMPTS_VERSION){
+        try{
+          state.order   = JSON.parse(localStorage.getItem(KEY_ORDER) || 'null');
+          state.idx     = parseInt(localStorage.getItem(KEY_INDEX) || '0', 10) || 0;
+          state.history = JSON.parse(localStorage.getItem(KEY_HIST)  || '[]');
+          state.hpos    = parseInt(localStorage.getItem(KEY_HPOS)   || String(state.history.length), 10) || state.history.length;
+        }catch{}
+      }
+      if (!Array.isArray(state.order) || state.order.length !== prompts.length){
+        state.order = freshOrder(null);
+        state.idx = 0; state.history = []; state.hpos = 0;
+      } else {
+        state.idx  = Math.min(Math.max(0, state.idx),  Math.max(0, state.order.length-1));
+        state.hpos = Math.min(Math.max(0, state.hpos), state.history.length);
+        state.history = state.history.filter(n => Number.isInteger(n) && n>=0 && n<prompts.length);
+      }
+      saveState(state);
+      return state;
     }
 
-    let currentIndex = 0;
-    let shuffledPrompts = shuffle([...prompts]);
+    let STATE = loadState();
 
-    function generatePrompt() {
-      if (currentIndex >= shuffledPrompts.length) {
-        shuffledPrompts = shuffle([...prompts]);
-        currentIndex = 0;
-      }
-      document.getElementById("prompt").textContent = shuffledPrompts[currentIndex];
-      currentIndex++;
+    /* ---------- UI helpers ---------- */
+    const elPrompt = document.getElementById('prompt');
+    const btnBack  = document.getElementById('btnBack');
+    const btnFwd   = document.getElementById('btnFwd');
+    const btnNext  = document.getElementById('btnNext');
+    const btnSave  = document.getElementById('btnSave');
+
+    function show(idx){ elPrompt.textContent = prompts[idx]; }
+    function updateNavButtons(){
+      btnBack.disabled = STATE.hpos <= 1;
+      btnFwd.disabled  = STATE.hpos >= STATE.history.length;
     }
+    function currentIndex(){
+      if (!STATE.history.length || STATE.hpos===0) return null;
+      return STATE.hpos===STATE.history.length
+        ? STATE.history[STATE.history.length-1]
+        : STATE.history[STATE.hpos-1];
+    }
+
+    function pickNextFromDeck(){
+      let { order, idx } = STATE;
+      const next = order[idx];
+      idx++;
+      if (idx >= order.length){
+        // avoid showing the same card twice in a row across cycles
+        const avoid = next;
+        order = freshOrder(avoid);
+        idx = 0;
+      }
+      STATE.order = order;
+      STATE.idx = idx;
+      return next;
+    }
+
+    function next(){
+      elPrompt.textContent = 'Here you go...!';
+      setTimeout(()=>{
+        if (STATE.hpos < STATE.history.length) STATE.history.splice(STATE.hpos);
+        const pick = pickNextFromDeck();
+        STATE.history.push(pick);
+        if (STATE.history.length > 500) STATE.history.splice(0, STATE.history.length-500);
+        STATE.hpos = STATE.history.length;
+        show(pick);
+        updateNavButtons();
+        saveState(STATE);
+        updateSaveButton();
+      }, 350);
+    }
+    function back(){
+      if (STATE.hpos > 1){
+        STATE.hpos -= 1;
+        show(STATE.history[STATE.hpos-1]);
+        updateNavButtons();
+        saveState(STATE);
+        updateSaveButton();
+      }
+    }
+    function forward(){
+      if (STATE.hpos < STATE.history.length){
+        const idx = STATE.history[STATE.hpos];
+        STATE.hpos += 1;
+        show(idx);
+        updateNavButtons();
+        saveState(STATE);
+        updateSaveButton();
+      }
+    }
+
+    /* ---------- Favorites ---------- */
+    const favListEl  = document.getElementById('favList');
+    const favEmptyEl = document.getElementById('favEmpty');
+    const btnCopyAll = document.getElementById('btnCopyAll');
+    const btnClear   = document.getElementById('btnClear');
+
+    function loadFavorites(){
+      try { return JSON.parse(localStorage.getItem(KEY_FAVS) || '[]'); }
+      catch { return []; }
+    }
+    function saveFavorites(list){
+      localStorage.setItem(KEY_FAVS, JSON.stringify(list));
+    }
+    let FAVORITES = loadFavorites(); // array of indices
+
+    function isFavorite(i){ return FAVORITES.includes(i); }
+    function updateSaveButton(){
+      const i = currentIndex();
+      if (i == null){ btnSave.disabled = true; btnSave.textContent = 'Save to Favorites'; return; }
+      btnSave.disabled = false;
+      btnSave.textContent = isFavorite(i) ? 'Saved' : 'Save to Favorites';
+    }
+    function saveCurrent(){
+      const i = currentIndex();
+      if (i == null) return;
+      if (!isFavorite(i)){
+        FAVORITES.push(i); saveFavorites(FAVORITES); renderFavorites();
+        showToast('Saved to favorites'); updateSaveButton();
+      } else {
+        showToast('Already in favorites');
+      }
+    }
+    function removeFavorite(i){
+      FAVORITES = FAVORITES.filter(n => n !== i); saveFavorites(FAVORITES);
+      renderFavorites(); updateSaveButton(); showToast('Removed');
+    }
+    function renderFavorites(){
+      favListEl.innerHTML = '';
+      if (!FAVORITES.length){ favEmptyEl.style.display = 'block'; return; }
+      favEmptyEl.style.display = 'none';
+      FAVORITES.forEach(i => {
+        const li = document.createElement('li'); li.className = 'favItem';
+        const txt = document.createElement('div'); txt.className = 'favText'; txt.textContent = prompts[i];
+        const actions = document.createElement('div'); actions.className = 'favActions';
+        const copyBtn = document.createElement('button'); copyBtn.className = 'iconBtn'; copyBtn.textContent='Copy';
+        copyBtn.onclick = ()=>{ navigator.clipboard.writeText(prompts[i]); showToast('Copied'); };
+        const delBtn  = document.createElement('button'); delBtn.className = 'iconBtn'; delBtn.textContent='Remove';
+        delBtn.onclick = ()=> removeFavorite(i);
+        actions.appendChild(copyBtn); actions.appendChild(delBtn);
+        li.appendChild(txt); li.appendChild(actions); favListEl.appendChild(li);
+      });
+    }
+    function copyFavorites(){
+      if (!FAVORITES.length){ showToast('No favorites to copy'); return; }
+      const text = FAVORITES.map(i => prompts[i]).join('\n');
+      navigator.clipboard.writeText(text); showToast('Favorites copied');
+    }
+    function clearFavorites(){
+      FAVORITES = []; saveFavorites(FAVORITES); renderFavorites(); updateSaveButton(); showToast('Favorites cleared');
+    }
+
+    /* ---------- Tiny toast ---------- */
+    const toastEl = document.getElementById('toast');
+    let toastTimer = null;
+    function showToast(msg){
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=> toastEl.classList.remove('show'), 1200);
+    }
+
+    /* ---------- Wire up ---------- */
+    btnNext.addEventListener('click', next);
+    btnBack.addEventListener('click', back);
+    btnFwd .addEventListener('click', forward);
+    btnSave.addEventListener('click', saveCurrent);
+    btnCopyAll.addEventListener('click', copyFavorites);
+    btnClear.addEventListener('click', clearFavorites);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') next();
+      if (e.key === 'ArrowLeft') back();
+      if (e.key === 'ArrowRight') forward();
+      if (e.key.toLowerCase() === 's') saveCurrent();
+    });
+
+    // On load: show last seen if exists
+    if (STATE.history.length){
+      STATE.hpos = STATE.history.length;
+      show(STATE.history[STATE.history.length - 1]);
+    }
+    updateNavButtons();
+    renderFavorites();
+    updateSaveButton();
+    saveState(STATE);
   </script>
 </body>
 </html>
