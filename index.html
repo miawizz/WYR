@@ -4,166 +4,420 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Would You Rather</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="manifest" href="manifest.json" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#699eb0" />
 
-  <style>
+<style>
+  :root {
+    --cream: #fff9f3;
+    --yellow: #f8b934;
+    --pink: #d94b7f;
+    --teal: #127490;
+    --coral: #e86f5c;
+    --mint: #9cc9be;
+    --peach: #f3c58f;
+    --ink: #3c3c3c;
+    --muted: #6b7f88;
+  }
 
-.circle-mode .home-button{
-  display:none !important;
-}
-    
-    body {
-      background: #fff9f3; 
-      font-family: 'Poppins', sans-serif;
-      text-align: center;
-      padding: 2rem;
-      color: #3c3c3c; 
-      margin: 0;
-    }
-    .logo { max-width: 150px; margin-bottom: 1rem; }
-    h1 {
-      color: #127490; 
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      font-size: 1.6rem;
-    }
-    #prompt {
-      margin: 2rem auto;
-      font-size: 1.25rem;
-      padding: 1.5rem;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 16px;
-      border: 2px dashed #f8b934; 
-      max-width: 90%;
-      min-height: 120px;
-      backdrop-filter: blur(6px);
-    }
-    .btns { display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; margin-top:1rem; }
-    button {
-      background-color: #b24627; 
-      color: white;
-      border: none;
-      padding: 1rem 1.2rem;
-      border-radius: 30px;
-      font-size: 1.05rem;
-      cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0,0,0,.08);
-    }
-    button:hover { background-color: #c95e3c; }
-    button[disabled]{opacity:.5; cursor:not-allowed;}
+  * {
+    box-sizing: border-box;
+  }
 
-    .btn-secondary{
-      background:#ffe9d6; color:#6b3a28;
-    }
-    .btn-secondary:hover{ background:#ffdcbf; }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+  }
 
+  main,
+  #favWrap,
+  .submit-card,
+  .print-deck,
+  footer {
+    width: calc(100% - 40px);
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
+  main {
+    padding-top: 32px;
+  }
 
+  .logo {
+    display: block;
+    width: 170px;
+    max-width: 45vw;
+    height: auto;
+    margin: 0 auto 18px;
+    border-radius: 24px;
+  }
+
+  h1 {
+    margin: 0 0 24px;
+    color: var(--teal);
+    font-size: clamp(1.65rem, 5vw, 2.25rem);
+    line-height: 1.1;
+    font-weight: 800;
+  }
+
+  .generator-card {
+    background: var(--mint);
+    padding: 24px;
+    border-radius: 28px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  }
+
+  .prompt-card {
+    min-height: 190px;
+    padding: 26px 24px;
+    border-radius: 20px;
+    background: var(--pink);
+    color: var(--cream);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .prompt-label {
+    margin-bottom: 12px;
+    color: var(--yellow);
+    font-size: .82rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+  }
+
+  #prompt {
+    margin: 0;
+    padding: 0;
+    max-width: 650px;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--cream);
+    font-size: clamp(1.05rem, 3.5vw, 1.3rem);
+    line-height: 1.5;
+    font-weight: 700;
+  }
+
+  button {
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 20px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  }
+
+  button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+
+  .btn-main {
+    width: min(100%, 420px);
+    margin-top: 20px;
+    background: var(--pink);
+    color: #fff;
+  }
+
+  .nav-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .nav-buttons button {
+    min-width: 120px;
+    background: var(--teal);
+    color: #fff;
+  }
+
+  .btn-secondary {
+    margin-top: 12px;
+    background: var(--peach);
+    color: #6b3a28;
+  }
+
+  .info-card,
+  #favWrap,
+  .submit-card,
+  .print-deck {
+    margin-top: 24px;
+    padding: 24px;
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 5px 18px rgba(0,0,0,.06);
+  }
+
+  .info-card h2,
+  .submit-card h2,
+  .print-deck h2 {
+    margin: 0 0 12px;
+    color: var(--teal);
+    font-size: 1.15rem;
+    font-weight: 800;
+  }
+
+  .info-card p,
+  .submit-card p,
+  .print-deck p {
+    margin: 8px auto;
+    line-height: 1.55;
+  }
+
+  #favWrap {
+    text-align: left;
+  }
+
+  #favHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  #favHeader h3 {
+    margin: 0;
+    color: var(--teal);
+    font-size: 1.15rem;
+    font-weight: 800;
+  }
+
+  #favHeader .btns {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+  }
+
+  #favHeader .btn-secondary {
+    margin: 0;
+    padding: 9px 13px;
+    font-size: .85rem;
+  }
+
+  #favList {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .favItem {
+    padding: 14px;
+    background: var(--cream);
+    border-radius: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .favText {
+    font-size: .95rem;
+    line-height: 1.45;
+  }
+
+  .favActions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .iconBtn {
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: var(--peach);
+    color: #6b3a28;
+    font-size: .8rem;
+    box-shadow: none;
+  }
+
+  .muted {
+    color: var(--muted);
+    font-size: .9rem;
+  }
+
+  .home-button {
+    display: inline-block;
+    margin-bottom: 22px;
+    padding: 9px 14px;
+    border-radius: 12px;
+    background: var(--teal);
+    color: #fff;
+    font-size: .85rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .circle-mode .home-button {
+    display: none !important;
+  }
+
+  #toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--teal);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    font-size: .95rem;
+    z-index: 9999;
+  }
+
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
+  }
+
+  footer {
+    padding: 28px 0 36px;
+    color: #777;
+    font-size: .82rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 600px) {
+    main,
+    #favWrap,
+    .submit-card,
+    .print-deck,
     footer {
-      font-size: 0.9rem; color: #777;
-      margin-top: 3rem; max-width: 90%;
-      margin-left: auto; margin-right: auto;
+      width: calc(100% - 28px);
     }
 
-    /* Favorites area */
-    #favWrap{ max-width:860px; margin:2rem auto 0; text-align:left; }
-    #favHeader{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-    #favHeader h3{ margin:0; color:#7a3e2e; font-size:1.1rem; }
-    #favList{
-      list-style:none; padding:0; margin:12px 0 0;
-      display:grid; grid-template-columns:1fr; gap:10px;
+    main {
+      padding-top: 22px;
     }
-    .favItem{
-      background:#fff; border:1px solid #ffdcbf; border-radius:14px; padding:12px 14px;
-      display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
-      box-shadow:0 2px 8px rgba(0,0,0,.04);
-    }
-    .favText{ font-size:.98rem; line-height:1.35rem; }
-    .favActions{ display:flex; gap:8px; flex-shrink:0; }
-    .iconBtn{
-      border:0; background:#ffe9d6; color:#6b3a28; padding:.45rem .7rem; border-radius:10px; font-size:.9rem; cursor:pointer;
-    }
-    .iconBtn:hover{ background:#ffdcbf; }
-    .muted{ color:#6b7f88; font-size:.9rem; }
 
-    /* Tiny toast */
-    #toast{
-      position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
-      background:#127490; color:#fff; padding:10px 14px; border-radius:12px;
-      box-shadow:0 8px 24px rgba(0,0,0,.18); opacity:0; pointer-events:none;
-      transition:opacity .25s ease, transform .25s ease;
-      font-size:.95rem;
+    .generator-card {
+      padding: 16px;
+      border-radius: 24px;
     }
-    #toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
-/* Back to Hub button */
-.home-button{
-  position:fixed;
-  top:12px;
-  left:12px;
-  background:#127490;
-  color:#fff;
-  padding:8px 12px;
-  border-radius:10px;
-  font-size:14px;
-  font-weight:600;
-  text-decoration:none;
-  z-index:10002;
-}
 
-/* Prevent overlap with content */
-body{
-  padding-top:3.5rem;
-}
+    .prompt-card {
+      min-height: 180px;
+      padding: 22px 18px;
+    }
 
-    
-  </style>
+    .nav-buttons button {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .favItem {
+      flex-direction: column;
+    }
+  }
+</style>
 </head>
 <body>
-    <a href="https://miawizz.github.io/php-app-hub/" class="home-button">
-  ← Back to Hub
-</a>
 
 
 
 
 
-  <!-- App content -->
-  <div id="generator">
-<img src="would-you-rather-graphic.png" alt="Would You Rather logo" class="logo" />    <h1>WOULD YOU RATHER...? from Playful Heart Parenting</h1>
 
-    <!-- Row 1 -->
-    <div class="btns">
-      <button id="btnNext">Would you rather…</button>
+<!-- App content -->
+<main>
+
+  <a href="https://miawizz.github.io/php-app-hub/" class="home-button">
+    Back to Hub
+  </a>
+
+  <img
+    src="would-you-rather-graphic.png"
+    alt="Would You Rather logo"
+    class="logo"
+  />
+
+  <h1>WOULD YOU RATHER...?</h1>
+
+  <section class="generator-card">
+
+    <div class="prompt-card">
+      <div class="prompt-label">WOULD YOU RATHER...?</div>
+
+      <div id="prompt">
+        Tap the button to get your first Would You Rather question!
+      </div>
     </div>
-    <!-- Row 2 -->
-    <div class="btns">
+
+    <button
+      id="btnNext"
+      class="btn-main"
+    >
+      Would You Rather?
+    </button>
+
+    <div class="nav-buttons">
       <button id="btnBack">Back</button>
       <button id="btnFwd">Forward</button>
     </div>
-    <!-- Row 3 -->
-    <div class="btns">
-      <button id="btnSave" class="btn-secondary">Save to Favorites</button>
-    </div>
 
-    <div id="prompt">Tap the button to get a "Would You Rather" question! For extra fun, explain your answer!</div>
+    <button
+      id="btnSave"
+      class="btn-secondary"
+    >
+      Save to Favorites
+    </button>
 
-    <footer>
-      © 2025 Mia Wisinski, Playful Heart Parenting. This app is for personal use only by those who have purchased <em>Would You Rather</em> from Playful Heart Parenting. Please do not share this link publicly or distribute without explicit permission.
-    </footer>
+  </section>
 
-    <div style="margin-top: 2rem;">
-      <h2>Submit Your Own!</h2>
-      <p style="font-size: 1rem; max-width: 600px; margin: 0 auto;">
-        Got a funny or creative Would You Rather idea? We’d love to hear it! Click below to submit — we may feature it in a future update and credit your first name.
-      </p>
-      <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScUKjXC-tbLy-BRjFXl8EwEvs9i1OYOlQZqMqX1QeVsvnlaAQ/viewform', '_blank')" style="margin-top: 1rem;">
-        Submit Your Idea
-      </button>
-    </div>
-  </div>
+
+  <section class="info-card how-to-play">
+
+    <h2>HOW TO PLAY</h2>
+
+    <p>
+      Tap the button to get a silly Would You Rather question, then take turns choosing your answer.
+    </p>
+
+    <p>
+      <strong>For extra fun, explain why you picked it!</strong>
+    </p>
+
+  </section>
+
+</main>
+
+
+<!-- Submit Your Own -->
+<section class="submit-card">
+
+  <h2>SUBMIT YOUR OWN!</h2>
+
+  <p>
+    Got a funny or creative Would You Rather idea? We’d love to hear it!
+    Submit yours and we may feature it in a future update and credit your first name.
+  </p>
+
+  <button
+    class="btn-secondary"
+    onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScUKjXC-tbLy-BRjFXl8EwEvs9i1OYOlQZqMqX1QeVsvnlaAQ/viewform', '_blank')"
+  >
+    Submit Your Idea
+  </button>
+
+</section>
+
+
 
   <!-- Favorites list -->
   <section id="favWrap" aria-labelledby="favTitle">
@@ -630,8 +884,7 @@ body{
     updateSaveButton();
     saveState(STATE);
   </script>
-   <div class="print-deck" style="margin:2rem 0; text-align:center;">
-  <hr style="margin-bottom:1rem;">
+<div class="print-deck">  <hr style="margin-bottom:1rem;">
   <p style="font-family:Poppins, sans-serif; font-size:1rem; color:#18323b;">
     Prefer screen-free play?
   </p>
